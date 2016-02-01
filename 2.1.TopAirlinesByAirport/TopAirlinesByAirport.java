@@ -68,7 +68,6 @@ public class TopAirlinesByAirport {
 
     public static class TopSourceCarrierMap extends Mapper<Text, Text, Text, Text> {
 
-
         @Override
         public void map(Text key, Text value, Context context) throws IOException, InterruptedException {
 
@@ -86,6 +85,7 @@ public class TopAirlinesByAirport {
             for (Pair<Integer, String> item : countToWordMap) {
                 context.write(new Text(key), new Text(item.second + "_" + item.first));
             }
+        }
     }
 
     public static class TopSourceCarrierReduce extends Reducer<Text, Text, Text, Text> {
@@ -131,7 +131,7 @@ public class TopAirlinesByAirport {
         FileInputFormat.setInputPaths(jobA, new Path(args[0]));
         FileOutputFormat.setOutputPath(jobA, tmpPath);
 
-        jobA.setJarByClass(TopSourceCarrier.class);
+        jobA.setJarByClass(TopAirlinesByAirport.class);
         jobA.waitForCompletion(true);
 
         Job jobB = Job.getInstance(conf, "TopAirlinesByAirportDeparturePerf");
@@ -151,7 +151,7 @@ public class TopAirlinesByAirport {
         jobB.setInputFormatClass(KeyValueTextInputFormat.class);
         jobB.setOutputFormatClass(TextOutputFormat.class);
 
-        jobB.setJarByClass(TopSourceCarrier.class);
+        jobB.setJarByClass(TopAirlinesByAirport.class);
         System.exit(jobB.waitForCompletion(true) ? 0 : 1);
     }
 }

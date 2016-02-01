@@ -129,7 +129,7 @@ public class TopAirlinesByRoute {
         FileInputFormat.setInputPaths(jobA, new Path(args[0]));
         FileOutputFormat.setOutputPath(jobA, tmpPath);
 
-        jobA.setJarByClass(TopSourceDestinationCarrier.class);
+        jobA.setJarByClass(TopAirlinesByRoute.class);
         jobA.waitForCompletion(true);
 
         Job jobB = Job.getInstance(conf, "TopAirlinesByRoute");
@@ -149,7 +149,7 @@ public class TopAirlinesByRoute {
         jobB.setInputFormatClass(KeyValueTextInputFormat.class);
         jobB.setOutputFormatClass(TextOutputFormat.class);
 
-        jobB.setJarByClass(TopSourceDestinationCarrier.class);
+        jobB.setJarByClass(TopAirlinesByRoute.class);
         System.exit(jobB.waitForCompletion(true) ? 0 : 1);
     }
 }
