@@ -1,0 +1,19 @@
+# Packages
+/dist/
+/build/
+
+# OS X Junk
+.DS_Store
+
+# Log files
+*.log
+*.iml
+
+.idea/
+
+# Package Files
+*.jar
+
+# Class
+*.class
+
