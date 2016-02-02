@@ -41,26 +41,32 @@ public class TopAirlines {
         }
     }
 
-    public static class AirlineCountReduce extends Reducer<Text, IntWritable, Text, IntWritable> {
+    public static class AirlineCountReduce extends Reducer<Text, IntWritable, Text, FloatWritable> {
         @Override
         public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
             int sum = 0;
+            int count = 0;
             for (IntWritable val : values) {
                 sum += val.get();
+                count++;
             }
-            context.write(key, new IntWritable(sum));
+
+            if (count > 0) {
+                float avg = (float) sum/ (float)count;
+                context.write(key, new FloatWritable(avg));
+            }
         }
     }
 
     public static class TopAirlinesMap extends Mapper<Text, Text, NullWritable, TextArrayWritable> {
-        private TreeSet<Pair<Integer, String>> countToAirlineMap = new TreeSet<Pair<Integer, String>>();
+        private TreeSet<Pair<Float, String>> countToAirlineMap = new TreeSet<Pair<Float, String>>();
 
         @Override
         public void map(Text key, Text value, Context context) throws IOException, InterruptedException {
-            Integer count = Integer.parseInt(value.toString());
+            Float count = Float.parseFloat(value.toString());
             String Airline = key.toString();
 
-            countToAirlineMap.add(new Pair<Integer, String>(count, Airline));
+            countToAirlineMap.add(new Pair<Float, String>(count, Airline));
 
             if (countToAirlineMap.size() > 10) {
                 countToAirlineMap.remove(countToAirlineMap.first());
@@ -69,7 +75,7 @@ public class TopAirlines {
 
         @Override
         protected void cleanup(Context context) throws IOException, InterruptedException {
-            for (Pair<Integer, String> item : countToAirlineMap) {
+            for (Pair<Float, String> item : countToAirlineMap) {
                 String[] strings = {item.second, item.first.toString()};
                 TextArrayWritable val = new TextArrayWritable(strings);
                 context.write(NullWritable.get(), val);
@@ -77,8 +83,8 @@ public class TopAirlines {
         }
     }
 
-    public static class TopAirlinesReduce extends Reducer<NullWritable, TextArrayWritable, Text, IntWritable> {
-        private TreeSet<Pair<Integer, String>> countToAirlineMap = new TreeSet<Pair<Integer, String>>();
+    public static class TopAirlinesReduce extends Reducer<NullWritable, TextArrayWritable, Text, FloatWritable> {
+        private TreeSet<Pair<Float, String>> countToAirlineMap = new TreeSet<Pair<Float, String>>();
 
         @Override
         public void reduce(NullWritable key, Iterable<TextArrayWritable> values, Context context) throws IOException, InterruptedException {
@@ -86,18 +92,18 @@ public class TopAirlines {
                 Text[] pair = (Text[]) val.toArray();
 
                 String Airline = pair[0].toString();
-                Integer count = Integer.parseInt(pair[1].toString());
+                Float count = Float.parseFloat(pair[1].toString());
 
-                countToAirlineMap.add(new Pair<Integer, String>(count, Airline));
+                countToAirlineMap.add(new Pair<Float, String>(count, Airline));
 
                 if (countToAirlineMap.size() > 10) {
                     countToAirlineMap.remove(countToAirlineMap.first());
                 }
             }
 
-            for (Pair<Integer, String> item : countToAirlineMap) {
+            for (Pair<Float, String> item : countToAirlineMap) {
                 Text Airline = new Text(item.second);
-                IntWritable value = new IntWritable(item.first);
+                FloatWritable value = new FloatWritable(item.first);
                 context.write(Airline, value);
             }
         }
@@ -126,7 +132,7 @@ public class TopAirlines {
 
         Job jobB = Job.getInstance(conf, "Top Airlines");
         jobB.setOutputKeyClass(Text.class);
-        jobB.setOutputValueClass(IntWritable.class);
+        jobB.setOutputValueClass(FloatWritable.class);
 
         jobB.setMapOutputKeyClass(NullWritable.class);
         jobB.setMapOutputValueClass(TextArrayWritable.class);
