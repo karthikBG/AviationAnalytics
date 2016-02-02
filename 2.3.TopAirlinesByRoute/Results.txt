@@ -1,0 +1,6 @@
+    CMI → ORD
+    IND → CMH
+    DFW → IAH
+    LAX → SFO
+    JFK → LAX
+    ATL → PHX

@@ -1,0 +1,6 @@
+    CMI → ORD → LAX, 04/03/2008
+    JAX → DFW → CRP, 09/09/2008
+    SLC → BFL → LAX, 01/04/2008
+    LAX → SFO → PHX, 12/07/2008
+    DFW → ORD → DFW, 10/06/2008
+    LAX → ORD → JFK, 01/01/2008
