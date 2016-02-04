@@ -1,4 +1,4 @@
-mport java.io.File;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
@@ -21,7 +21,7 @@ public class CassandraDriver {
         session = cluster.connect();
         session.execute("USE tp");
         
-        String query = "CREATE TABLE topairlinesbyroute(airport_name text, airline_name text, performance float, PRIMARY KEY (airport_name, performance, airline_name)) WITH CLUSTERING ORDER BY (performance ASC);";
+        String query = "CREATE TABLE topairlinesbyroute1(airport_name text, airline_name text, performance float, PRIMARY KEY (airport_name, performance, airline_name)) WITH CLUSTERING ORDER BY (performance ASC);";
         session.execute(query);
         
         
@@ -30,9 +30,9 @@ public class CassandraDriver {
         
         while(input.hasNextLine()) {
             String line = input.nextLine();
-            String[] split = line.split("   ");
-            String airportX = split[0].trim();
-            String[] split1 = split[1].split(",");
+            //String[] split = line.split("   ");
+            String airportX = line.substring(0,9).trim();
+            String[] split1 = line.substring(9,line.length()).split(",");
             
             for(int i = 0 ; i < split1.length ; i++) {
                 
@@ -41,34 +41,34 @@ public class CassandraDriver {
                 String airlineX = split3[0];
                 float performanceX = Float.parseFloat(split3[1]);
                 
-                session.execute("INSERT INTO tp.topairlinesbyroute(airport_name, airline_name, performance) VALUES (?,?,?)", airportX, airlineX, performanceX);
+                session.execute("INSERT INTO tp.topairlinesbyroute1(airport_name, airline_name, performance) VALUES (?,?,?)", airportX, airlineX, performanceX);
             
                 }
             }
         }
         
-        ResultSet results = session.execute("SELECT * FROM topairlinesbyroute WHERE airport_name='CMI->ORD' LIMIT 10;");
+        ResultSet results = session.execute("SELECT * FROM topairlinesbyroute1 WHERE airport_name='CMI->ORD' LIMIT 10;");
         for (Row row : results) {
             System.out.println(row.getString("airport_name") + "    " + row.getString("airline_name")+"_"+row.getFloat("performance"));
         }
         
-        results = session.execute("SELECT * FROM topairlinesbyroute WHERE airport_name='IND->CMH' LIMIT 10;");
+        results = session.execute("SELECT * FROM topairlinesbyroute1 WHERE airport_name='IND->CMH' LIMIT 10;");
         for (Row row : results) {
             System.out.println(row.getString("airport_name") + "    " + row.getString("airline_name")+"_"+row.getFloat("performance"));
         }
-        results = session.execute("SELECT * FROM topairlinesbyroute WHERE airport_name='DFW->IAH' LIMIT 10;");
+        results = session.execute("SELECT * FROM topairlinesbyroute1 WHERE airport_name='DFW->IAH' LIMIT 10;");
         for (Row row : results) {
             System.out.println(row.getString("airport_name") + "    " + row.getString("airline_name")+"_"+row.getFloat("performance"));
         }
-        results = session.execute("SELECT * FROM topairlinesbyroute WHERE airport_name='LAX->SFO' LIMIT 10;");
+        results = session.execute("SELECT * FROM topairlinesbyroute1 WHERE airport_name='LAX->SFO' LIMIT 10;");
         for (Row row : results) {
             System.out.println(row.getString("airport_name") + "    " + row.getString("airline_name")+"_"+row.getFloat("performance"));
         }
-        results = session.execute("SELECT * FROM topairlinesbyroute WHERE airport_name='JFK->LAX' LIMIT 10;");
+        results = session.execute("SELECT * FROM topairlinesbyroute1 WHERE airport_name='JFK->LAX' LIMIT 10;");
         for (Row row : results) {
             System.out.println(row.getString("airport_name") + "    " + row.getString("airline_name")+"_"+row.getFloat("performance"));
         }
-        results = session.execute("SELECT * FROM topairlinesbyroute WHERE airport_name='ATL->PHX' LIMIT 10;");
+        results = session.execute("SELECT * FROM topairlinesbyroute1 WHERE airport_name='ATL->PHX' LIMIT 10;");
         for (Row row : results) {
             System.out.println(row.getString("airport_name") + "    " + row.getString("airline_name")+"_"+row.getFloat("performance"));
         }

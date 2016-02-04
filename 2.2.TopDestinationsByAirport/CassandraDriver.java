@@ -1,4 +1,4 @@
-mport java.io.File;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
@@ -21,7 +21,7 @@ public class CassandraDriver {
         session = cluster.connect();
         session.execute("USE tp");
         
-        String query = "CREATE TABLE topdestinationbyairport(airport_name text, destination_name text, performance float, PRIMARY KEY (airport_name, performance, destination_name)) WITH CLUSTERING ORDER BY (performance ASC);";
+        String query = "CREATE TABLE topdestinationbyairport1(airport_name text, destination_name text, performance float, PRIMARY KEY (airport_name, performance, destination_name)) WITH CLUSTERING ORDER BY (performance ASC);";
         session.execute(query);
         
         
@@ -30,41 +30,41 @@ public class CassandraDriver {
         
         while(input.hasNextLine()) {
             String line = input.nextLine();
-            String[] split = line.split("   ");
-            String airportX = split[0].trim();
-            String[] split1 = split[1].split(" ");
+            //String[] split = line.split("   ");
+            String airportX = line.substring(0,4).trim();
+            String[] split1 = line.substring(4, line.length()).split(" ");
             
             for(int i = 0 ; i < split1.length ; i++) {
                 String[] split3 = split1[i].split("_");
                 String airlineX = split3[0];
                 float performanceX = Float.parseFloat(split3[1]);
                 
-                session.execute("INSERT INTO tp.topdestinationbyairport(airport_name, destination_name, performance) VALUES (?,?,?)", airportX, airlineX, performanceX);
+                session.execute("INSERT INTO tp.topdestinationbyairport1(airport_name, destination_name, performance) VALUES (?,?,?)", airportX, airlineX, performanceX);
             }
         }
         
-        ResultSet results = session.execute("SELECT * FROM topdestinationbyairport WHERE airport_name='CMI' LIMIT 10;");
+        ResultSet results = session.execute("SELECT * FROM topdestinationbyairport1 WHERE airport_name='CMI' LIMIT 10;");
         for (Row row : results) {
             System.out.println(row.getString("airport_name") + "    " + row.getString("destination_name")+"_"+row.getFloat("performance"));
         }
         
-        results = session.execute("SELECT * FROM topdestinationbyairport WHERE airport_name='BWI' LIMIT 10;");
+        results = session.execute("SELECT * FROM topdestinationbyairport1 WHERE airport_name='BWI' LIMIT 10;");
         for (Row row : results) {
             System.out.println(row.getString("airport_name") + "    " + row.getString("destination_name")+"_"+row.getFloat("performance"));
         }
-        results = session.execute("SELECT * FROM topdestinationbyairport WHERE airport_name='MIA' LIMIT 10;");
+        results = session.execute("SELECT * FROM topdestinationbyairport1 WHERE airport_name='MIA' LIMIT 10;");
         for (Row row : results) {
             System.out.println(row.getString("airport_name") + "    " + row.getString("destination_name")+"_"+row.getFloat("performance"));
         }
-        results = session.execute("SELECT * FROM topdestinationbyairport WHERE airport_name='LAX' LIMIT 10;");
+        results = session.execute("SELECT * FROM topdestinationbyairport1 WHERE airport_name='LAX' LIMIT 10;");
         for (Row row : results) {
             System.out.println(row.getString("airport_name") + "    " + row.getString("destination_name")+"_"+row.getFloat("performance"));
         }
-        results = session.execute("SELECT * FROM topdestinationbyairport WHERE airport_name='IAH' LIMIT 10;");
+        results = session.execute("SELECT * FROM topdestinationbyairport1 WHERE airport_name='IAH' LIMIT 10;");
         for (Row row : results) {
             System.out.println(row.getString("airport_name") + "    " + row.getString("destination_name")+"_"+row.getFloat("performance"));
         }
-        results = session.execute("SELECT * FROM topdestinationbyairport WHERE airport_name='SFO' LIMIT 10;");
+        results = session.execute("SELECT * FROM topdestinationbyairport1 WHERE airport_name='SFO' LIMIT 10;");
         for (Row row : results) {
             System.out.println(row.getString("airport_name") + "    " + row.getString("destination_name")+"_"+row.getFloat("performance"));
         }

@@ -1,4 +1,4 @@
-mport java.io.File;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
@@ -30,9 +30,13 @@ public class CassandraDriver {
         
         while(input.hasNextLine()) {
             String line = input.nextLine();
-            String[] split = line.split("   ");
-            String airportX = split[0].trim();
-            String[] split1 = split[1].split(",");
+            //System.out.println(line);
+
+            //String[] split = line.split("    ");
+            String airportX = line.substring(0,4).trim();
+
+           // if(split[1].contains(",")){
+            String[] split1 = line.substring(4,line.length()).split(",");
             
             for(int i = 0 ; i < split1.length ; i++) {
                 String[] split3 = split1[i].split("_");
@@ -41,6 +45,12 @@ public class CassandraDriver {
                 
                 session.execute("INSERT INTO tp.topairlinebyairport5(airport_name, airline_name, performance) VALUES (?,?,?)", airportX, airlineX, performanceX);
             }
+           /* } else {
+                String[] split3 = split[1].split("_");
+                String airlineX = split3[0];
+                float performanceX = Float.parseFloat(split3[1]);
+                session.execute("INSERT INTO tp.topairlinebyairport5(airport_name, airline_name, performance) VALUES (?,?,?)", airportX, airlineX, performanceX);
+            }*/
         }
         
         ResultSet results = session.execute("SELECT * FROM topairlinebyairport5 WHERE airport_name='CMI' LIMIT 10;");
