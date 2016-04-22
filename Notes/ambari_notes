@@ -1,0 +1,20 @@
+
+sudo cp ambari.repo /etc/yum.repos.d/
+sudo yum repolist
+sudo yum install ambari-server
+sudo python /usr/lib/python2.6/site-packages/ambari_agent/HostCleanup.py --silent --skip=users
+sudo yum install ntp
+sudo service ntpd start
+sudo ambari-server setup
+sudo yum remove snappy
+sudo yum install snappy-devel 
+
+git clone https://github.com/dstreev/hdp-utils
+cd hdp-utils/strip_hdp/
+sudo su
+for i in `cat yum_packages.txt`;do yum -y erase "${i}";done
+for i in `cat etc_dir.txt`;do rm -rf ${i};done
+for i in `cat data_log_dirs.txt`;do rm -rf ${i};done
+
+eval `ssh-agent -s`
+ssh-add ~/.ssh/id_rsa.mac

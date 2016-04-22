@@ -1,0 +1,30 @@
+javac -cp .:$(hbase classpath):$(hadoop classpath) -d build WordCount.java
+jar -cvf WordCount.jar -C build/ ./
+hadoop jar WordCount.jar WordCount /user/ec2-user/tutorial/input /user/ec2-user/tutorial/output
+hadoop fs -cat /user/ec2-user/tutorial/output/part*
+
+export HADOOP_CLASSPATH=$JAVA_HOME/lib/tools.jar:mysql-connector-java.jar:$(hadoop classpath)
+hadoop com.sun.tools.javac.Main WordCount.java -d build
+jar -cvf WordCount.jar -C build/ ./
+hadoop jar WordCount.jar WordCount /tutorial/input /tutorial/output
+
+
+rm TopAirlines.jar
+rm build/*
+hadoop fs -rm -r /user/ec2-user/task1/output
+javac -cp .:$(hbase classpath):$(hadoop classpath) -d build TopAirlines.java 
+jar -cvf TopAirlines.jar -C build/ ./
+yarn jar TopAirlines.jar TopAirlines /user/ec2-user/task1/input /user/ec2-user/task1/output
+
+yarn application -list
+yarn application -kill $ApplicationId
+
+spark-submit --master yarn --num-executors 3 --driver-memory 512m --executor-memory 1g --executor-cores 1 --files /etc/spark/conf/log4j.properties ./wordcount.py /user/ec2-user/task1/input /user/ec2-user/task1/output
+
+kafka-topics.sh --delete --zookeeper localhost:2181 --topic 2008
+
+*************(None, u'Year,Month,DayofMonth,DayOfWeek,DepTime,CRSDepTime,ArrTime,CRSArrTime,UniqueCarrier,FlightNum,ActualElapsedTime,CRSElapsedTime,AirTime,ArrDelay,DepDelay,Origin,Dest,Distance,Cancelled\n')********
+
+spark-submit --master "local[1]" --jars spark-streaming-kafka-assembly_2.10-1.5.2.jar spark_consumer.py
+
+CREATE TABLE TopAirlinesByAirport(airport_name text, airline_name text, PRIMARY KEY (airport_name));
